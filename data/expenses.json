@@ -1,0 +1,21 @@
+[
+  {
+    "id": 1,
+    "description": "Pizza night",
+    "amount": 9000,
+    "paidBy": "Alice",
+    "participants": ["Alice", "Bob", "Chris"],
+    "splitType": "equal",
+    "date": "2026-11-01T18:30:00.000Z"
+  },
+  {
+    "id": 2,
+    "description": "Taxi to campus",
+    "amount": 2500,
+    "paidBy": "Bob",
+    "participants": ["Alice", "Bob"],
+    "splitType": "percent",
+    "values": [40, 60],
+    "date": "2026-11-03T08:10:00.000Z"
+  }
+]
