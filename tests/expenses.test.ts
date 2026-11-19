@@ -44,6 +44,23 @@ describe('validateExpense', () => {
   it('rejects missing description', () => {
     expect(validateExpense(makeExpense({ description: '' }))).toBe('Description is required');
   });
+
+  it('rejects percent split with wrong number of values', () => {
+    expect(validateExpense(makeExpense({ splitType: 'percent', values: [50, 50] }))).toBe(
+      'Percent split needs one value per participant'
+    );
+  });
+
+  it('rejects exact split without values', () => {
+    expect(validateExpense(makeExpense({ splitType: 'exact' }))).toBe(
+      'Exact split needs one value per participant'
+    );
+  });
+
+  it('rejects unknown split type', () => {
+    const expense = makeExpense({ splitType: 'shares' as unknown as Expense['splitType'] });
+    expect(validateExpense(expense)).toBe('Unknown split type: shares');
+  });
 });
 
 describe('balances and settling', () => {
