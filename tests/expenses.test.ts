@@ -75,3 +75,21 @@ describe('balances and settling', () => {
     ]);
   });
 });
+
+describe('mitigation C2/C3: split values must match the amount', () => {
+  it('rejects percent values that do not add up to 100', () => {
+    expect(validateExpense(makeExpense({ splitType: 'percent', values: [10, 10, 10] }))).toBe(
+      'Percent values must add up to 100'
+    );
+  });
+
+  it('accepts percent values that add up to 100 with small rounding', () => {
+    expect(validateExpense(makeExpense({ splitType: 'percent', values: [33.33, 33.33, 33.34] }))).toBeNull();
+  });
+
+  it('rejects exact values that do not add up to the amount', () => {
+    expect(validateExpense(makeExpense({ splitType: 'exact', values: [1000, 1000, 1000] }))).toBe(
+      'Exact values must add up to the amount'
+    );
+  });
+});

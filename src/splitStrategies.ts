@@ -14,11 +14,24 @@ const equalSplit: SplitStrategy = {
   },
 };
 
+// Allowed difference when comparing sums (protects against small rounding like 33.33 + 33.33 + 33.34)
+const TOLERANCE = 0.01;
+
+function sum(values: number[]): number {
+  return values.reduce((total, v) => total + v, 0);
+}
+
 const percentSplit: SplitStrategy = {
-  validate: (expense) =>
-    !expense.values || expense.values.length !== expense.participants.length
-      ? 'Percent split needs one value per participant'
-      : null,
+  validate: (expense) => {
+    if (!expense.values || expense.values.length !== expense.participants.length) {
+      return 'Percent split needs one value per participant';
+    }
+    // written as !(a <= b) so that NaN is also rejected
+    if (!(Math.abs(sum(expense.values) - 100) <= TOLERANCE)) {
+      return 'Percent values must add up to 100';
+    }
+    return null;
+  },
   calculate: (expense) =>
     expense.participants.map((p, i) => ({
       person: p,
@@ -27,10 +40,15 @@ const percentSplit: SplitStrategy = {
 };
 
 const exactSplit: SplitStrategy = {
-  validate: (expense) =>
-    !expense.values || expense.values.length !== expense.participants.length
-      ? 'Exact split needs one value per participant'
-      : null,
+  validate: (expense) => {
+    if (!expense.values || expense.values.length !== expense.participants.length) {
+      return 'Exact split needs one value per participant';
+    }
+    if (!(Math.abs(sum(expense.values) - expense.amount) <= TOLERANCE)) {
+      return 'Exact values must add up to the amount';
+    }
+    return null;
+  },
   calculate: (expense) =>
     expense.participants.map((p, i) => ({ person: p, amount: expense.values![i] })),
 };
