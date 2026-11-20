@@ -16,6 +16,14 @@ export function validateExpense(expense: Expense): string | null {
     return 'At least one participant is required';
   }
 
+  // Number.isFinite rejects NaN (e.g. from parseFloat("abc")) and Infinity
+  if (!Number.isFinite(expense.amount) || expense.amount <= 0) {
+    return 'Amount must be a positive number';
+  }
+  if (expense.values && expense.values.some((v) => !Number.isFinite(v) || v < 0)) {
+    return 'Split values must be non-negative numbers';
+  }
+
   const strategy = getSplitStrategy(expense.splitType);
   if (!strategy) {
     return 'Unknown split type: ' + expense.splitType;

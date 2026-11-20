@@ -93,3 +93,23 @@ describe('mitigation C2/C3: split values must match the amount', () => {
     );
   });
 });
+
+describe('mitigation C4: amount and values must be valid numbers', () => {
+  it('rejects a non-numeric amount (NaN)', () => {
+    expect(validateExpense(makeExpense({ amount: NaN }))).toBe('Amount must be a positive number');
+  });
+
+  it('rejects a negative amount', () => {
+    expect(validateExpense(makeExpense({ amount: -500 }))).toBe('Amount must be a positive number');
+  });
+
+  it('rejects a zero amount', () => {
+    expect(validateExpense(makeExpense({ amount: 0 }))).toBe('Amount must be a positive number');
+  });
+
+  it('rejects non-numeric or negative split values', () => {
+    expect(
+      validateExpense(makeExpense({ splitType: 'exact', values: [7000, -1000, NaN] }))
+    ).toBe('Split values must be non-negative numbers');
+  });
+});
